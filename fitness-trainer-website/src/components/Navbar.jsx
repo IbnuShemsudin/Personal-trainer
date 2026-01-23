@@ -54,14 +54,14 @@ const Navbar = () => {
           {/* Professional Logo Branding */}
           <div className="flex items-center gap-4 group cursor-pointer">
             <div className="relative">
-               <div className="bg-emerald-600 text-white w-12 h-12 flex items-center justify-center font-black italic skew-x-[-10deg] group-hover:skew-x-0 transition-transform duration-300">
-                EF
+               <div className="bg-emerald-600 text-white w-15 h-12 flex items-center justify-center font-black italic skew-x-[-10deg] group-hover:skew-x-0 transition-transform duration-300">
+                HAYDI
               </div>
               <div className="absolute inset-0 border border-emerald-500 translate-x-1 translate-y-1 -z-10 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform" />
             </div>
             <div className="flex flex-col">
               <span className="text-2xl font-display font-black text-white tracking-tighter leading-none uppercase">
-                ETHIO<span className="text-emerald-500 italic">FIT</span>
+                ETHIO<span className="text-emerald-500 italic">ASTHETICS</span>
               </span>
               <span className="text-[9px] uppercase text-emerald-500/80 tracking-[0.4em] font-black">Elite Performance</span>
             </div>
