@@ -1,17 +1,30 @@
-import React from 'react'
-import Navbar from './components/Navbar'
-import Hero from './components/Hero'
-import Programs from './components/Programs'
-import './index.css'
+import React from 'react';
+import Navbar from './components/Navbar';
+import Hero from './components/Hero';
+import Programs from './components/Programs';
+import About from './components/About';
+import Experience from './components/Experience';
+import Gallery from './components/Gallery';
+// import Results from './components/Results'; // Your Transformation Slider
+import Contact from './components/Contact';
+import TransformationSlider from './components/TransformationSlider';
 
-const App = () => {
+function App() {
   return (
-    <div>
+    <div className="bg-zinc-950 selection:bg-emerald-500 selection:text-white">
+  
       <Navbar />
-      <Hero />
-      <Programs />
+      <main>
+        <Hero />
+        <Programs />
+        <About />
+        <Experience />
+        <Gallery />
+        <TransformationSlider />
+        <Contact />
+      </main>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
