@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Send, Phone, MapPin, Instagram, MessageSquare } from 'lucide-react';
+import { Send, Phone, MapPin, Instagram, MessageCircle, Music2 } from 'lucide-react';
 
 const Contact = () => {
   return (
@@ -30,35 +30,60 @@ const Contact = () => {
             </p>
 
             <div className="space-y-8">
-              <div className="flex items-center gap-6 group">
+              {/* Phone - Link opens dialer */}
+              <a href="tel:+251963764285" className="flex items-center gap-6 group cursor-pointer">
                 <div className="w-14 h-14 bg-zinc-900 border border-white/5 flex items-center justify-center text-emerald-500 group-hover:bg-emerald-600 group-hover:text-white transition-all">
                   <Phone size={24} />
                 </div>
                 <div>
                   <p className="text-[10px] uppercase text-zinc-500 font-bold tracking-widest">Call Directly</p>
-                  <p className="text-white font-display text-xl">+251 9XX XX XX XX</p>
+                  <p className="text-white font-display text-xl">+251 963764285</p>
                 </div>
-              </div>
+              </a>
 
-              <div className="flex items-center gap-6 group">
+              {/* Location - Link opens Google Maps */}
+              <a href="https://maps.google.com/?q=SweatBox+SarBet+Branch+Addis+Ababa" target="_blank" rel="noopener noreferrer" className="flex items-center gap-6 group cursor-pointer">
                 <div className="w-14 h-14 bg-zinc-900 border border-white/5 flex items-center justify-center text-emerald-500 group-hover:bg-emerald-600 group-hover:text-white transition-all">
                   <MapPin size={24} />
                 </div>
                 <div>
                   <p className="text-[10px] uppercase text-zinc-500 font-bold tracking-widest">Location</p>
-                  <p className="text-white font-display text-xl">Bole, Addis Ababa, ET</p>
+                  <p className="text-white font-display text-xl">SweatBox SarBet Branch, Addis Ababa, ET</p>
                 </div>
-              </div>
+              </a>
 
-              <div className="flex items-center gap-6 group">
+              {/* Instagram */}
+              <a href="https://www.instagram.com/haydi_ethio_aesthetics" target="_blank" rel="noopener noreferrer" className="flex items-center gap-6 group cursor-pointer">
                 <div className="w-14 h-14 bg-zinc-900 border border-white/5 flex items-center justify-center text-emerald-500 group-hover:bg-emerald-600 group-hover:text-white transition-all">
                   <Instagram size={24} />
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase text-zinc-500 font-bold tracking-widest">Social</p>
-                  <p className="text-white font-display text-xl">@Ethio_Fit_Pro</p>
+                  <p className="text-[10px] uppercase text-zinc-500 font-bold tracking-widest">Instagram</p>
+                  <p className="text-white font-display text-xl">@haydi_ethio_aesthetics</p>
+                </div>           
+              </a>
+
+              {/* Telegram */}
+              <a href="https://t.me/@H_Man" target="_blank" rel="noopener noreferrer" className="flex items-center gap-6 group cursor-pointer">
+                <div className="w-14 h-14 bg-zinc-900 border border-white/5 flex items-center justify-center text-emerald-500 group-hover:bg-emerald-600 group-hover:text-white transition-all">
+                  <MessageCircle size={24} />
                 </div>
-              </div>
+                <div>
+                  <p className="text-[10px] uppercase text-zinc-500 font-bold tracking-widest">Telegram</p>
+                  <p className="text-white font-display text-xl">t.me/Telegram</p>
+                </div>           
+              </a>
+
+              {/* TikTok */}
+              <a href="https://www.tiktok.com/@ethioaesthetics" target="_blank" rel="noopener noreferrer" className="flex items-center gap-6 group cursor-pointer">
+                <div className="w-14 h-14 bg-zinc-900 border border-white/5 flex items-center justify-center text-emerald-500 group-hover:bg-emerald-600 group-hover:text-white transition-all">
+                  <Music2 size={24} />
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase text-zinc-500 font-bold tracking-widest">TikTok</p>
+                  <p className="text-white font-display text-xl">@ethioaesthetics</p>
+                </div>           
+              </a>
             </div>
           </div>
 
@@ -108,7 +133,7 @@ const Contact = () => {
       {/* Footer Minimal */}
       <footer className="mt-32 border-t border-white/5 py-10 text-center">
         <p className="text-[10px] text-zinc-600 uppercase tracking-[0.5em] font-bold">
-          &copy; 2026 Ethio Fit. Built for the disciplined.
+          &copy; 2026 EthioAsthetics. Built for the disciplined.
         </p>
       </footer>
     </section>

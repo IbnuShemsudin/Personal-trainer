@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence, useScroll } from 'framer-motion';
-import { Menu, X, Instagram, Send, Globe, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion';
+import { Menu, X, Instagram, Send, Globe, ChevronRight, MessageSquare, Twitter } from 'lucide-react';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { scrollYProgress } = useScroll();
+  
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -16,29 +22,36 @@ const Navbar = () => {
   const navLinks = [
     { name: 'Home', href: '#home' },
     { name: 'Training', href: '#programs' },
-    { name: 'Transformations', href: '#results' },
-    { name: 'Experience', href: '#about' },
+    { name: 'Results', href: '#results' },
+    { name: 'About', href: '#about' },
+    { name: 'Contact', href: '#contact' },
   ];
 
   return (
     <header className="fixed w-full z-[100]">
-      {/* 1. Subtle Reading Progress Bar */}
+      {/* 1. Progress Bar */}
       <motion.div 
-        className="h-[2px] bg-emerald-500 origin-left fixed top-0 left-0 right-0 z-[110]"
-        style={{ scaleX: scrollYProgress }}
+        className="h-[3px] bg-gradient-to-r from-emerald-600 to-emerald-400 origin-left fixed top-0 left-0 right-0 z-[110]"
+        style={{ scaleX }}
       />
 
-      {/* 2. Top Info Bar (Hidden on Mobile) */}
-      <div className={`hidden md:flex bg-black border-b border-white/5 py-2 transition-all duration-500 ${scrolled ? 'opacity-0 -translate-y-full' : 'opacity-100'}`}>
-        <div className="container mx-auto px-6 flex justify-between text-[10px] font-bold tracking-[0.2em] text-zinc-500 uppercase">
-          <div className="flex gap-6">
-            <span className="flex items-center gap-2"><Globe size={12} className="text-emerald-500" /> Addis Ababa, Ethiopia</span>
-            <span>Available for Online Coaching</span>
+      {/* 2. Top Info Bar */}
+      <div className={`hidden md:flex bg-zinc-950/80 backdrop-blur-md border-b border-white/5 py-2 transition-all duration-700 ${scrolled ? 'opacity-0 -translate-y-full' : 'opacity-100'}`}>
+        <div className="container mx-auto px-6 flex justify-between text-[10px] font-black tracking-[0.3em] text-zinc-500 uppercase">
+          <div className="flex gap-8">
+            <span className="flex items-center gap-2 group cursor-default">
+              <Globe size={12} className="text-emerald-500 animate-pulse" /> 
+              Addis Ababa, <span className="text-zinc-300">Ethiopia</span>
+            </span>
+            <span className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
+              Accepting New Clients
+            </span>
           </div>
-          <div className="flex gap-4 items-center">
-            <a href="#" className="hover:text-white transition">Instagram</a>
-            <span className="text-zinc-800">|</span>
-            <a href="#" className="hover:text-white transition">Telegram</a>
+          <div className="flex gap-6 items-center">
+            <a href="#" className="hover:text-emerald-400 transition-colors">Instagram</a>
+            <a href="#" className="hover:text-emerald-400 transition-colors">Telegram</a>
+            <a href="#" className="hover:text-emerald-400 transition-colors">TikTok</a>
           </div>
         </div>
       </div>
@@ -46,53 +59,62 @@ const Navbar = () => {
       {/* 3. Main Navigation */}
       <nav className={`transition-all duration-500 ${
         scrolled 
-          ? 'ethio-glass py-3' 
-          : 'bg-transparent py-6'
+          ? 'bg-zinc-950/80 backdrop-blur-xl border-b border-white/5 py-4' 
+          : 'bg-transparent py-8'
       }`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
           
-          {/* Professional Logo Branding */}
-          <div className="flex items-center gap-4 group cursor-pointer">
+          {/* Logo Branding */}
+          <a href="#home" className="flex items-center gap-4 group">
             <div className="relative">
-               <div className="bg-emerald-600 text-white w-15 h-12 flex items-center justify-center font-black italic skew-x-[-10deg] group-hover:skew-x-0 transition-transform duration-300">
+              <div className="bg-emerald-600 text-white w-16 h-11 flex items-center justify-center font-black italic skew-x-[-12deg] group-hover:skew-x-0 group-hover:bg-white group-hover:text-black transition-all duration-500">
                 HAYDI
               </div>
-              <div className="absolute inset-0 border border-emerald-500 translate-x-1 translate-y-1 -z-10 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform" />
+              <div className="absolute inset-0 border border-emerald-500/50 translate-x-1.5 translate-y-1.5 -z-10 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-500" />
             </div>
             <div className="flex flex-col">
               <span className="text-2xl font-display font-black text-white tracking-tighter leading-none uppercase">
                 ETHIO<span className="text-emerald-500 italic">ASTHETICS</span>
               </span>
-              <span className="text-[9px] uppercase text-emerald-500/80 tracking-[0.4em] font-black">Elite Performance</span>
+              <span className="text-[8px] uppercase text-zinc-500 tracking-[0.5em] font-black group-hover:text-emerald-500 transition-colors">Physical Excellence</span>
             </div>
-          </div>
+          </a>
 
-          {/* Desktop Links with Magnetic Underline */}
-          <div className="hidden lg:flex items-center space-x-12">
-            <div className="flex space-x-10">
+          {/* Desktop Links */}
+          <div className="hidden lg:flex items-center space-x-10">
+            <div className="flex space-x-8">
               {navLinks.map((link) => (
                 <a 
                   key={link.name} 
                   href={link.href} 
-                  className="text-[11px] font-black text-zinc-400 uppercase tracking-[0.2em] hover:text-white transition-all relative group"
+                  className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.25em] hover:text-emerald-500 transition-all relative group py-2"
                 >
                   {link.name}
-                  <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-[3px] bg-emerald-500 transition-all group-hover:w-full" />
+                  <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-emerald-500 transition-all duration-300 group-hover:w-full" />
                 </a>
               ))}
             </div>
             
-            <button className="relative overflow-hidden group bg-white px-8 py-3 rounded-none transition-all duration-300">
-              <span className="relative z-10 text-black text-[11px] font-black uppercase tracking-widest flex items-center gap-2">
-                Get Started <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+            {/* CTA Button Linked to Contact */}
+            <a 
+              href="#contact" 
+              className="relative group overflow-hidden border border-emerald-500/50 px-8 py-3 transition-all duration-500 hover:border-emerald-500 block"
+            >
+              <span className="relative z-10 text-white text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-3">
+                Join The Elite <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
               </span>
-              <div className="absolute inset-0 bg-emerald-500 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-            </button>
+              <div className="absolute inset-0 bg-emerald-600 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+            </a>
           </div>
 
           {/* Mobile Menu Button */}
-          <button className="lg:hidden text-white w-10 h-10 flex items-center justify-center border border-white/10" onClick={() => setIsOpen(!isOpen)}>
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
+          <button 
+            className="lg:hidden relative z-[130] text-white w-12 h-12 flex items-center justify-center bg-zinc-900 border border-white/10 overflow-hidden group" 
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            <motion.div animate={{ rotate: isOpen ? 90 : 0 }} className="relative">
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
+            </motion.div>
           </button>
         </div>
       </nav>
@@ -101,40 +123,61 @@ const Navbar = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div 
-            initial={{ opacity: 0, clipPath: 'circle(0% at 90% 10%)' }}
-            animate={{ opacity: 1, clipPath: 'circle(150% at 90% 10%)' }}
-            exit={{ opacity: 0, clipPath: 'circle(0% at 90% 10%)' }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 h-screen bg-zinc-950 z-[120] flex flex-col p-10 lg:hidden"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed inset-0 h-screen bg-zinc-950 z-[120] flex flex-col lg:hidden"
           >
-            <div className="flex justify-between items-center mb-20">
-               <span className="text-2xl font-black text-white italic">EF</span>
-               <button onClick={() => setIsOpen(false)} className="text-white border border-white/20 p-2 rounded-full">
-                 <X size={24} />
-               </button>
+            <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none opacity-20">
+               <span className="absolute -right-20 top-20 text-[40vh] font-black text-white/5 italic select-none">EF</span>
             </div>
 
-            <div className="flex flex-col space-y-6">
-              {navLinks.map((link, i) => (
-                <motion.a 
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.2 + i * 0.1 }}
-                  key={link.name} 
-                  href={link.href} 
+            <div className="container mx-auto px-10 flex flex-col h-full pt-32 pb-12 relative z-10">
+              <div className="flex flex-col space-y-4">
+                {navLinks.map((link, i) => (
+                  <motion.a 
+                    initial={{ x: -50, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.1 * i, duration: 0.5 }}
+                    key={link.name} 
+                    href={link.href} 
+                    onClick={() => setIsOpen(false)}
+                    className="text-5xl md:text-7xl font-display font-black text-white uppercase italic hover:text-emerald-500 transition-all flex items-center gap-4 group"
+                  >
+                    <span className="text-emerald-500 text-xl font-sans not-italic group-hover:translate-x-2 transition-transform">0{i+1}</span>
+                    {link.name}
+                  </motion.a>
+                ))}
+              </div>
+
+              {/* Mobile CTA */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6 }}
+                className="mt-8"
+              >
+                <a 
+                  href="#contact" 
                   onClick={() => setIsOpen(false)}
-                  className="text-6xl font-display font-black text-white uppercase italic hover:text-emerald-500 transition-colors"
+                  className="bg-emerald-600 text-white text-center py-4 font-black uppercase tracking-widest text-xs block"
                 >
-                  {link.name}
-                </motion.a>
-              ))}
-            </div>
+                  Join The Elite Now
+                </a>
+              </motion.div>
 
-            <div className="mt-auto pt-10 border-t border-white/5 flex flex-col gap-4">
-              <p className="text-emerald-500 font-bold uppercase tracking-widest text-xs">Transform Today</p>
-              <div className="flex gap-8">
-                <Instagram className="text-white hover:text-emerald-500 transition cursor-pointer" />
-                <Send className="text-white hover:text-emerald-500 transition cursor-pointer" />
+              <div className="mt-auto grid grid-cols-2 gap-10 pt-10 border-t border-white/10">
+                <div className="space-y-2">
+                  <p className="text-emerald-500 font-black uppercase tracking-widest text-[10px]">Direct Contact</p>
+                  <p className="text-white font-display text-lg uppercase tracking-tighter">+251 963 764285</p>
+                </div>
+                <div className="space-y-4">
+                  <p className="text-emerald-500 font-black uppercase tracking-widest text-[10px]">Follow Us</p>
+                  <div className="flex gap-6">
+                     <a href="https://www.Instagram.com/@haydi_ethio_aesthetics" target="_blank" rel="noopener noreferrer" className="flex items-center gap-6 group cursor-pointer"><Instagram className="text-white hover:text-emerald-500 transition-colors" size={20} /></a>
+                      <a href="https://t.me/@H_Man" target="_blank" rel="noopener noreferrer" className="flex items-center gap-6 group cursor-pointer"><Send className="text-white hover:text-emerald-500 transition-colors" size={20} /></a>
+                  </div>
+                </div>
               </div>
             </div>
           </motion.div>
