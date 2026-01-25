@@ -8,7 +8,8 @@ import Gallery from './components/Gallery';
 // import Results from './components/Results'; // Your Transformation Slider
 import Contact from './components/Contact';
 import TransformationSlider from './components/TransformationSlider';
-
+import Footer from './components/Footer';
+import FAQ from './components/FAQ';
 function App() {
   return (
     <div className="bg-zinc-950 selection:bg-emerald-500 selection:text-white">
@@ -21,7 +22,9 @@ function App() {
         <Experience />
         <Gallery />
         <TransformationSlider />
+        <FAQ />
         <Contact />
+        <Footer />
       </main>
     </div>
   );

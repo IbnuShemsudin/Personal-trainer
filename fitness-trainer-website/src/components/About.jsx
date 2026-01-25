@@ -1,9 +1,36 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useScroll, useTransform, useInView, useSpring, useMotionValue } from 'framer-motion';
 import { CheckCircle2, Award, Zap, Users, Target, MoveRight, X, Flame, Shield, Brain } from 'lucide-react';
 
-// 1. IMPORT YOUR LOCAL IMAGE
+// Import local image
 import coachImage from '../assets/heroImage1.png'; 
+
+// --- COUNTER COMPONENT ---
+const AnimatedNumber = ({ value }) => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true }); // Starts when scrolled into view
+  const motionValue = useMotionValue(0);
+  const springValue = useSpring(motionValue, {
+    damping: 30,
+    stiffness: 100,
+  });
+
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    if (inView) {
+      motionValue.set(value);
+    }
+  }, [inView, value, motionValue]);
+
+  useEffect(() => {
+    return springValue.on("change", (latest) => {
+      setDisplayValue(Math.floor(latest));
+    });
+  }, [springValue]);
+
+  return <span ref={ref}>{displayValue}</span>;
+};
 
 const About = () => {
   const [isPhilosophyOpen, setIsPhilosophyOpen] = useState(false);
@@ -42,9 +69,9 @@ const About = () => {
               <div className="relative z-10 overflow-hidden border border-white/5 group aspect-[4/5] bg-zinc-900">
                 <motion.img 
                   style={{ y: imageY }}
-                  src={coachImage} // 2. USING YOUR LOCAL IMAGE
+                  src={coachImage} 
                   alt="Head Coach" 
-                  className="w-full h-[120%] object-cover grayscale hover:grayscale-0 transition-all duration-1000 scale-110"
+                  className="w-full h-[120%] object-cover hover:grayscale transition-all duration-1000 scale-110"
                 />
                 
                 <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent opacity-80" />
@@ -58,7 +85,7 @@ const About = () => {
                 </div>
               </div>
 
-              {/* Floating Stat Card */}
+              {/* Floating Stat Card with Counter */}
               <motion.div 
                 initial={{ x: 40, opacity: 0 }}
                 whileInView={{ x: 0, opacity: 1 }}
@@ -66,7 +93,9 @@ const About = () => {
               >
                 <div className="flex items-center gap-4">
                   <div className="flex flex-col text-right">
-                    <span className="text-emerald-500 font-display text-5xl font-black italic leading-none">6+</span>
+                    <span className="text-emerald-500 font-display text-5xl font-black italic leading-none">
+                      <AnimatedNumber value={6} />+
+                    </span>
                     <span className="text-white/40 text-[9px] uppercase tracking-[0.3em] font-bold mt-2">Years Exp</span>
                   </div>
                   <Target className="text-emerald-500 w-8 h-8 opacity-40" />
@@ -92,32 +121,39 @@ const About = () => {
               "I don’t just count reps; I make <span className="text-white font-medium italic">every rep count</span>. Results are not given, they are earned through cold, hard discipline."
             </p>
 
-            {/* Achievement Grid */}
+            {/* Achievement Grid with Counters */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-10 gap-x-12 mb-16">
-              {[
-                { icon: <Award />, title: "IFBB Pro Level", sub: "Global Standards" },
-                { icon: <Users />, title: "500+ Results", sub: "Transformations" },
-              ].map((item, i) => (
-                <div key={i} className="group flex items-center gap-5">
-                  <div className="p-3 bg-zinc-900 border border-white/5 text-emerald-500">{item.icon}</div>
+                <div className="group flex items-center gap-5">
+                  <div className="p-3 bg-zinc-900 border border-white/5 text-emerald-500"><Award /></div>
                   <div>
-                    <h4 className="text-white font-black uppercase text-sm mb-1">{item.title}</h4>
-                    <p className="text-zinc-600 text-[9px] uppercase tracking-widest">{item.sub}</p>
+                    <h4 className="text-white font-black uppercase text-sm mb-1 italic">
+                        Elite Status
+                    </h4>
+                    <p className="text-zinc-600 text-[9px] uppercase tracking-widest">Global Standards</p>
                   </div>
                 </div>
-              ))}
+
+                <div className="group flex items-center gap-5">
+                  <div className="p-3 bg-zinc-900 border border-white/5 text-emerald-500"><Users /></div>
+                  <div>
+                    <h4 className="text-white font-black uppercase text-sm mb-1 italic">
+                        <AnimatedNumber value={500} />+ Results
+                    </h4>
+                    <p className="text-zinc-600 text-[9px] uppercase tracking-widest">Transformations</p>
+                  </div>
+                </div>
             </div>
 
-            {/* Signature Area & Functional Button */}
+            {/* Signature Area */}
             <div className="pt-12 border-t border-white/5 flex flex-col sm:flex-row items-center gap-12">
               <div className="flex flex-col">
-                <span className="text-white font-display text-4xl font-black italic tracking-tighter uppercase leading-none">Ethio Asthetics</span>
+                <span className="text-white font-display text-4xl font-black italic tracking-tighter uppercase leading-none">Ethio Aesthetics</span>
                 <span className="text-emerald-600 text-[9px] uppercase tracking-[0.6em] font-black mt-3 text-center sm:text-left">Addis Ababa</span>
               </div>
               
               <motion.button 
                 whileHover={{ x: 10 }}
-                onClick={() => setIsPhilosophyOpen(true)} // 3. NOW FUNCTIONAL
+                onClick={() => setIsPhilosophyOpen(true)}
                 className="group flex items-center gap-6 text-white bg-white/5 hover:bg-emerald-600/10 px-8 py-4 border border-white/10 hover:border-emerald-500/50 transition-all duration-500"
               >
                 <span className="text-[10px] font-black uppercase tracking-[0.3em]">Learn My Philosophy</span>
@@ -128,14 +164,14 @@ const About = () => {
         </div>
       </div>
 
-      {/* PHILOSOPHY MODAL */}
+      {/* Modal remains the same... */}
       <AnimatePresence>
         {isPhilosophyOpen && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[500] flex items-center justify-center p-6">
             <div className="absolute inset-0 bg-black/98 backdrop-blur-xl" onClick={() => setIsPhilosophyOpen(false)} />
             <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative bg-zinc-900 border border-white/10 p-12 max-w-4xl w-full">
               <button onClick={() => setIsPhilosophyOpen(false)} className="absolute top-8 right-8 text-zinc-500 hover:text-white"><X size={32}/></button>
-              <h2 className="text-4xl font-display font-black text-white uppercase italic mb-12">The <span className="text-emerald-500">Haydi EthioAsthetics</span> Pillars</h2>
+              <h2 className="text-4xl font-display font-black text-white uppercase italic mb-12">The <span className="text-emerald-500">Ethio Aesthetics</span> Pillars</h2>
               <div className="grid md:grid-cols-3 gap-8">
                 {pillars.map((p, i) => (
                   <div key={i} className="p-6 bg-white/5 border border-white/5 hover:border-emerald-500/50 transition-colors">

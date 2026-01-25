@@ -131,11 +131,11 @@ const Contact = () => {
       </div>
 
       {/* Footer Minimal */}
-      <footer className="mt-32 border-t border-white/5 py-10 text-center">
+      {/* <footer className="mt-32 border-t border-white/5 py-10 text-center">
         <p className="text-[10px] text-zinc-600 uppercase tracking-[0.5em] font-bold">
           &copy; 2026 EthioAsthetics. Built for the disciplined.
         </p>
-      </footer>
+      </footer> */}
     </section>
   );
 };
