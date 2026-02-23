@@ -1,8 +1,43 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Send, Phone, MapPin, Instagram, MessageCircle, Music2 } from 'lucide-react';
+import React, { useState } from 'react'; // Added useState
+import { motion, AnimatePresence } from 'framer-motion';
+import { Send, Phone, MapPin, Instagram, MessageCircle, Music2, Loader2, CheckCircle } from 'lucide-react';
 
 const Contact = () => {
+  // --- BACKEND INTEGRATION STATE ---
+  const [formData, setFormData] = useState({
+    fullName: '',
+    phone: '',
+    program: 'Bodybuilding',
+    goals: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const response = await fetch('http://localhost:5000/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        setSubmitted(true);
+        setFormData({ fullName: '', phone: '', program: 'Bodybuilding', goals: '' });
+      }
+    } catch (error) {
+      console.error("Transmission failed:", error);
+      alert("System Offline. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <section id="contact" className="py-32 bg-zinc-950 relative">
       <div className="container mx-auto px-6">
@@ -89,53 +124,98 @@ const Contact = () => {
 
           {/* Right: Modern Form */}
           <div className="lg:col-span-7">
-            <motion.form 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-zinc-900/30 p-8 md:p-12 border border-white/5 backdrop-blur-sm"
-            >
-              <div className="space-y-2">
-                <label className="text-[10px] uppercase text-emerald-500 font-black tracking-widest">Full Name</label>
-                <input type="text" placeholder="Abebe Bikila" className="w-full bg-zinc-950 border border-white/10 px-4 py-4 text-white focus:border-emerald-500 outline-none transition" />
-              </div>
+            <AnimatePresence mode="wait">
+              {submitted ? (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="h-full min-h-[400px] flex flex-col items-center justify-center bg-zinc-900/30 border border-emerald-500/20 p-12 text-center"
+                >
+                  <CheckCircle size={48} className="text-emerald-500 mb-4" />
+                  <h4 className="text-3xl font-display font-black text-white uppercase italic">Inquiry Received</h4>
+                  <p className="text-zinc-500 mt-2 uppercase tracking-widest text-[10px]">I will contact you within 24 hours.</p>
+                  <button onClick={() => setSubmitted(false)} className="mt-8 text-emerald-500 uppercase text-[10px] font-black tracking-[0.3em] underline underline-offset-4">Send another</button>
+                </motion.div>
+              ) : (
+                <motion.form 
+                  onSubmit={handleSubmit}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-zinc-900/30 p-8 md:p-12 border border-white/5 backdrop-blur-sm"
+                >
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase text-emerald-500 font-black tracking-widest">Full Name</label>
+                    <input 
+                      required
+                      name="fullName"
+                      value={formData.fullName}
+                      onChange={handleChange}
+                      type="text" 
+                      placeholder="Abebe Bikila" 
+                      className="w-full bg-zinc-950 border border-white/10 px-4 py-4 text-white focus:border-emerald-500 outline-none transition" 
+                    />
+                  </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] uppercase text-emerald-500 font-black tracking-widest">Phone Number</label>
-                <input type="tel" placeholder="+251..." className="w-full bg-zinc-950 border border-white/10 px-4 py-4 text-white focus:border-emerald-500 outline-none transition" />
-              </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase text-emerald-500 font-black tracking-widest">Phone Number</label>
+                    <input 
+                      required
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      type="tel" 
+                      placeholder="+251..." 
+                      className="w-full bg-zinc-950 border border-white/10 px-4 py-4 text-white focus:border-emerald-500 outline-none transition" 
+                    />
+                  </div>
 
-              <div className="md:col-span-2 space-y-2">
-                <label className="text-[10px] uppercase text-emerald-500 font-black tracking-widest">Choose Program</label>
-                <select className="w-full bg-zinc-950 border border-white/10 px-4 py-4 text-white focus:border-emerald-500 outline-none transition">
-                  <option>Bodybuilding</option>
-                  <option>Weight Loss</option>
-                  <option>Strength Coaching</option>
-                  <option>Online Coaching</option>
-                </select>
-              </div>
+                  <div className="md:col-span-2 space-y-2">
+                    <label className="text-[10px] uppercase text-emerald-500 font-black tracking-widest">Choose Program</label>
+                    <select 
+                      name="program"
+                      value={formData.program}
+                      onChange={handleChange}
+                      className="w-full bg-zinc-950 border border-white/10 px-4 py-4 text-white focus:border-emerald-500 outline-none transition"
+                    >
+                      <option value="Bodybuilding">Bodybuilding</option>
+                      <option value="Weight Loss">Weight Loss</option>
+                      <option value="Strength Coaching">Strength Coaching</option>
+                      <option value="Online Coaching">Online Coaching</option>
+                    </select>
+                  </div>
 
-              <div className="md:col-span-2 space-y-2">
-                <label className="text-[10px] uppercase text-emerald-500 font-black tracking-widest">Your Goals</label>
-                <textarea rows="4" placeholder="Tell me about your fitness goals..." className="w-full bg-zinc-950 border border-white/10 px-4 py-4 text-white focus:border-emerald-500 outline-none transition resize-none"></textarea>
-              </div>
+                  <div className="md:col-span-2 space-y-2">
+                    <label className="text-[10px] uppercase text-emerald-500 font-black tracking-widest">Your Goals</label>
+                    <textarea 
+                      name="goals"
+                      value={formData.goals}
+                      onChange={handleChange}
+                      rows="4" 
+                      placeholder="Tell me about your fitness goals..." 
+                      className="w-full bg-zinc-950 border border-white/10 px-4 py-4 text-white focus:border-emerald-500 outline-none transition resize-none"
+                    ></textarea>
+                  </div>
 
-              <div className="md:col-span-2">
-                <button className="w-full bg-emerald-600 hover:bg-white text-white hover:text-black py-5 font-black uppercase tracking-[0.3em] transition-all duration-500 flex items-center justify-center gap-3">
-                  Send Application <Send size={18} />
-                </button>
-              </div>
-            </motion.form>
+                  <div className="md:col-span-2">
+                    <button 
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full bg-emerald-600 hover:bg-white text-white hover:text-black py-5 font-black uppercase tracking-[0.3em] transition-all duration-500 flex items-center justify-center gap-3 disabled:opacity-50"
+                    >
+                      {isSubmitting ? (
+                        <Loader2 className="animate-spin" size={18} />
+                      ) : (
+                        <>Send Application <Send size={18} /></>
+                      )}
+                    </button>
+                  </div>
+                </motion.form>
+              )}
+            </AnimatePresence>
           </div>
 
         </div>
       </div>
-
-      {/* Footer Minimal */}
-      {/* <footer className="mt-32 border-t border-white/5 py-10 text-center">
-        <p className="text-[10px] text-zinc-600 uppercase tracking-[0.5em] font-bold">
-          &copy; 2026 EthioAsthetics. Built for the disciplined.
-        </p>
-      </footer> */}
     </section>
   );
 };

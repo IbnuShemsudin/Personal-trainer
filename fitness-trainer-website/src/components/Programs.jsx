@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Dumbbell, Zap, Target, Activity, ArrowUpRight, X, CheckCircle2, Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom'; // Added for multi-page redirect
+import { 
+  Dumbbell, Zap, Target, Activity, ArrowUpRight, 
+  X, CheckCircle2, Loader2, Crown 
+} from 'lucide-react';
 
 const programs = [
   {
@@ -38,151 +42,239 @@ const programs = [
 ];
 
 const Programs = () => {
+  const navigate = useNavigate(); // Initialize navigation
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     const formData = new FormData(e.target);
-    const name = formData.get('name');
+    const fullName = formData.get('name');
     const phone = formData.get('phone');
-
-    // CONFIGURATION (REPLACE THESE)
-    const BOT_TOKEN = "8490723136:AAGQSpa3sV7MuaQCE0xBFTNeU3WzGi12deY"; 
-    const CHAT_ID = "8490723136";
-    const MESSAGE = `🚀 *NEW APPLICATION*\n\n👤 *Name:* ${name}\n📞 *Contact:* ${phone}\n🏋️ *Program:* ${selectedProgram.title}`;
+    const email = formData.get('email'); 
+    const userGoals = formData.get('goals'); 
 
     try {
-      const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      // 1. Send to MongoDB Backend
+      await fetch('http://localhost:5000/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          chat_id: CHAT_ID,
-          text: MESSAGE,
-          parse_mode: 'Markdown'
+          fullName,
+          phone,
+          email, 
+          program: selectedProgram.title,
+          goals: userGoals 
         })
       });
 
-      if (response.ok) {
-        setIsSuccess(true);
-        setTimeout(() => {
-          setIsSuccess(false);
-          setSelectedProgram(null);
-        }, 3000);
-      } else {
-        throw new Error();
-      }
+      // 2. Send to Telegram
+      // NOTE: Ensure CHAT_ID is your personal ID (e.g. 123456789), not the bot token.
+      const BOT_TOKEN = "8490723136:AAGQSpa3sV7MuaQCE0xBFTNeU3WzGi12deY"; 
+      const CHAT_ID = "8490723136"; 
+      const MESSAGE = `🚀 *NEW APPLICATION*\n\n👤 *Name:* ${fullName}\n📞 *Contact:* ${phone}\n📧 *Email:* ${email}\n🏋️ *Program:* ${selectedProgram.title}\n🎯 *Goals:* ${userGoals}`;
+
+      await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: CHAT_ID, text: MESSAGE, parse_mode: 'Markdown' })
+      });
+
+      // 3. Navigate to Success Page
+      navigate('/success');
+
     } catch (error) {
-      alert("Something went wrong. Please check your credentials.");
+      alert("Submission error. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <section id="programs" className="py-32 bg-zinc-950 relative overflow-hidden">
+    <section id="programs" className="py-32 bg-[#050505] relative overflow-hidden">
+      
       {/* Background Polish */}
-      <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+      <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-px h-full bg-gradient-to-b from-transparent via-emerald-500 to-transparent" />
         <div className="absolute top-0 left-3/4 w-px h-full bg-gradient-to-b from-transparent via-emerald-500 to-transparent" />
       </div>
 
       <div className="container mx-auto px-6 relative z-10">
         
-        {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-20 gap-12">
-          <div className="max-w-3xl">
-            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="flex items-center gap-4 mb-6">
-              <div className="h-[1px] w-12 bg-emerald-500" />
-              <span className="text-emerald-500 font-black tracking-[0.5em] uppercase text-[10px]">Specialized Programs</span>
+        {/* Header Section */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-24 gap-12">
+          <div className="max-w-4xl">
+            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="flex items-center gap-4 mb-8">
+              <div className="h-[2px] w-12 bg-emerald-500" />
+              <span className="text-emerald-500 font-bold tracking-[0.6em] uppercase text-[10px]">Specialized Warfare</span>
             </motion.div>
-            <motion.h3 initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} className="text-6xl md:text-8xl font-display font-black text-white uppercase italic leading-[0.8] tracking-tighter">
-              SELECT YOUR <br /><span className="text-transparent stroke-text">WARFARE</span>
+            <motion.h3 
+              initial={{ opacity: 0, y: 40 }} 
+              whileInView={{ opacity: 1, y: 0 }} 
+              className="text-7xl md:text-9xl font-display font-black text-white uppercase italic leading-[0.75] tracking-tighter"
+            >
+              SELECT YOUR <br /><span className="text-transparent stroke-text opacity-30">PROGRAM</span>
             </motion.h3>
           </div>
-          <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="text-zinc-500 lg:max-w-xs border-l border-emerald-500/30 pl-8 py-2">
-            Professional systems built for maximum physical transformation and metabolic efficiency.
-          </motion.p>
+          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="lg:max-w-xs border-l-2 border-emerald-500/30 pl-8 py-4">
+            <p className="text-zinc-500 text-sm font-medium leading-relaxed tracking-wide">
+              Professional training systems built for maximum physical transformation and metabolic efficiency.
+            </p>
+          </motion.div>
         </div>
 
-        {/* Grid */}
+        {/* Programs Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-0 border border-white/5">
           {programs.map((p, i) => (
             <motion.div
               key={p.id}
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
               onClick={() => setSelectedProgram(p)}
-              className="group relative h-[600px] flex flex-col justify-end p-10 overflow-hidden border-white/5 md:border-r last:border-r-0 cursor-pointer"
+              className="group relative h-[650px] flex flex-col justify-end p-12 overflow-hidden border-white/5 md:border-r last:border-r-0 cursor-pointer"
             >
               <div className="absolute inset-0 z-0">
-                <div className="absolute inset-0 bg-cover bg-center grayscale scale-110 group-hover:scale-100 group-hover:grayscale-0 transition-all duration-1000" style={{ backgroundImage: `url(${p.bgImage})` }} />
-                <div className="absolute inset-0 bg-zinc-950/90 group-hover:bg-zinc-950/40 transition-all duration-700" />
-                <div className="absolute inset-0 bg-emerald-900/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div 
+                  className="absolute inset-0 bg-cover bg-center grayscale scale-110 group-hover:scale-100 group-hover:grayscale-0 transition-all duration-[1500ms]" 
+                  style={{ backgroundImage: `url(${p.bgImage})` }} 
+                />
+                <div className="absolute inset-0 bg-[#050505]/90 group-hover:bg-[#050505]/40 transition-all duration-700" />
+                <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
 
-              <div className="relative z-20">
-                <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest bg-emerald-500/10 px-3 py-1 mb-4 inline-block">{p.tag}</span>
-                <h4 className="text-4xl font-display font-black text-white uppercase italic mb-4 group-hover:text-emerald-500 transition-colors">{p.title}</h4>
-                <div className="max-h-0 group-hover:max-h-32 overflow-hidden transition-all duration-700">
-                  <p className="text-zinc-300 text-sm mb-8 leading-relaxed">{p.desc}</p>
+              <div className="relative z-20 transition-transform duration-500 group-hover:-translate-y-4">
+                <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest bg-emerald-500/10 px-4 py-1.5 mb-6 inline-block border border-emerald-500/20">
+                  {p.tag}
+                </span>
+                
+                <h4 className="text-4xl font-display font-black text-white uppercase italic mb-6 leading-none group-hover:text-emerald-400 transition-colors">
+                  {p.title}
+                </h4>
+
+                <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-all duration-700 ease-in-out">
+                  <p className="text-zinc-400 text-sm mb-8 leading-relaxed overflow-hidden">
+                    {p.desc}
+                  </p>
                 </div>
-                <button className="flex items-center gap-3 text-white font-black text-[10px] uppercase tracking-[0.3em] group-hover:gap-6 transition-all">
-                  Enroll Now <ArrowUpRight size={18} className="text-emerald-500" />
-                </button>
+
+                <div className="flex items-center gap-4 text-white font-black text-[10px] uppercase tracking-[0.4em]">
+                  <span className="group-hover:text-emerald-400 transition-colors">Enroll Now</span>
+                  <div className="h-[1px] w-8 bg-white/20 group-hover:w-16 group-hover:bg-emerald-500 transition-all duration-500" />
+                  <ArrowUpRight size={18} className="text-emerald-500" />
+                </div>
               </div>
-              <div className="absolute bottom-0 left-0 h-1 bg-emerald-500 w-0 group-hover:w-full transition-all duration-500" />
+
+              {/* Architectural ID */}
+              <span className="absolute top-10 right-10 text-white/5 font-display font-black text-8xl group-hover:text-emerald-500/10 transition-colors">
+                {p.id}
+              </span>
             </motion.div>
           ))}
         </div>
       </div>
 
-      {/* ENROLLMENT MODAL */}
+      {/* MODAL */}
       <AnimatePresence>
         {selectedProgram && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[300] flex items-center justify-center p-4 md:p-10">
-            <div className="absolute inset-0 bg-black/98 backdrop-blur-lg" onClick={() => !isSubmitting && setSelectedProgram(null)} />
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0 }} 
+            className="fixed inset-0 z-[300] flex items-center justify-center p-4 lg:p-12"
+          >
+            <div className="absolute inset-0 bg-black/98 backdrop-blur-xl" onClick={() => !isSubmitting && setSelectedProgram(null)} />
             
-            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} className="relative w-full max-w-4xl bg-zinc-900 border border-emerald-500/20 grid lg:grid-cols-2 overflow-hidden shadow-2xl">
-              {!isSubmitting && <button onClick={() => setSelectedProgram(null)} className="absolute top-5 right-5 text-zinc-500 hover:text-white z-10"><X size={24}/></button>}
+            <motion.div 
+              initial={{ scale: 0.95, y: 30 }} 
+              animate={{ scale: 1, y: 0 }} 
+              exit={{ scale: 0.95, y: 30 }} 
+              className="relative w-full max-w-5xl bg-[#0a0a0a] border border-white/10 grid lg:grid-cols-2 overflow-hidden shadow-2xl shadow-emerald-500/5"
+            >
+              {!isSubmitting && (
+                <button onClick={() => setSelectedProgram(null)} className="absolute top-8 right-8 text-zinc-500 hover:text-emerald-500 z-10 transition-all hover:rotate-90">
+                  <X size={32} strokeWidth={1}/>
+                </button>
+              )}
               
-              <div className="p-12 bg-zinc-800 border-r border-white/5">
-                <h2 className="text-4xl font-display font-black text-white uppercase italic mb-8 leading-none">Apply for <br/><span className="text-emerald-500">{selectedProgram.title}</span></h2>
-                <div className="space-y-6">
-                  {["Custom Macros & Diet Plan", "Weekly Video Check-ins", "Training App Access"].map((item) => (
-                    <div key={item} className="flex items-center gap-4 text-zinc-300 font-bold uppercase text-[10px] tracking-widest">
-                      <CheckCircle2 size={18} className="text-emerald-500" /> {item}
-                    </div>
-                  ))}
+              <div className="p-16 bg-[#0f0f0f] border-r border-white/5 relative">
+                <div className="relative z-10">
+                  <div className="inline-flex items-center gap-2 text-emerald-500 mb-8 bg-emerald-500/5 border border-emerald-500/20 px-3 py-1">
+                    <Crown size={12} />
+                    <span className="text-[9px] font-black uppercase tracking-widest">Intake Status: Open</span>
+                  </div>
+                  <h2 className="text-5xl md:text-6xl font-display font-black text-white uppercase italic mb-10 leading-none">
+                    JOIN <br/><span className="text-emerald-500">{selectedProgram.title}</span>
+                  </h2>
+                  <div className="space-y-8">
+                    {["Custom Nutrition Strategy", "Weekly Video Check-ins", "Exclusive App Access"].map((item) => (
+                      <div key={item} className="flex items-center gap-5 text-zinc-400 font-bold uppercase text-[10px] tracking-[0.3em]">
+                        <CheckCircle2 size={20} className="text-emerald-500 shrink-0" /> {item}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              <div className="p-12 flex flex-col justify-center">
-                {isSuccess ? (
-                  <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center">
-                    <CheckCircle2 size={64} className="text-emerald-500 mx-auto mb-6" />
-                    <h3 className="text-3xl font-display font-black text-white uppercase italic">Sent Successfully</h3>
-                    <p className="text-zinc-500 text-sm mt-4">I will reach out to you personally.</p>
-                  </motion.div>
-                ) : (
-                  <form className="space-y-6" onSubmit={handleSubmit}>
-                    <div>
-                      <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 mb-2 block">Full Name</label>
-                      <input name="name" required className="w-full bg-zinc-950 border border-white/10 p-4 text-white focus:border-emerald-500 outline-none transition-all placeholder:text-zinc-700" placeholder="Abebe Kebede" />
-                    </div>
-                    <div>
-                      <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 mb-2 block">WhatsApp / Phone</label>
-                      <input name="phone" required className="w-full bg-zinc-950 border border-white/10 p-4 text-white focus:border-emerald-500 outline-none transition-all placeholder:text-zinc-700" placeholder="+251 ..." />
-                    </div>
-                    <button disabled={isSubmitting} className="w-full bg-emerald-600 hover:bg-white text-white hover:text-black py-5 font-black uppercase tracking-[0.3em] text-xs transition-all flex items-center justify-center gap-3">
+              <div className="p-16 flex flex-col justify-center bg-[#0a0a0a]">
+                <form className="space-y-6" onSubmit={handleSubmit}>
+                  <div className="group">
+                    <label className="text-[10px] uppercase font-black tracking-[0.4em] text-zinc-500 mb-2 block group-focus-within:text-emerald-500 transition-colors">Your Full Name</label>
+                    <input 
+                      name="name" 
+                      required 
+                      autoComplete="off"
+                      className="w-full bg-transparent border-b border-white/10 p-3 text-white focus:border-emerald-500 outline-none transition-all placeholder:text-zinc-800 text-xl font-display uppercase italic" 
+                      placeholder="Abebe Kebede" 
+                    />
+                  </div>
+
+                  <div className="group">
+                    <label className="text-[10px] uppercase font-black tracking-[0.4em] text-zinc-500 mb-2 block group-focus-within:text-emerald-500 transition-colors">Email Address</label>
+                    <input 
+                      name="email" 
+                      type="email"
+                      required 
+                      autoComplete="off"
+                      className="w-full bg-transparent border-b border-white/10 p-3 text-white focus:border-emerald-500 outline-none transition-all placeholder:text-zinc-800 text-xl font-display uppercase italic" 
+                      placeholder="RECRUIT@WARFARE.COM" 
+                    />
+                  </div>
+
+                  <div className="group">
+                    <label className="text-[10px] uppercase font-black tracking-[0.4em] text-zinc-500 mb-2 block group-focus-within:text-emerald-500 transition-colors">WhatsApp Contact</label>
+                    <input 
+                      name="phone" 
+                      required 
+                      autoComplete="off"
+                      className="w-full bg-transparent border-b border-white/10 p-3 text-white focus:border-emerald-500 outline-none transition-all placeholder:text-zinc-800 text-xl font-display uppercase italic" 
+                      placeholder="+251 ..." 
+                    />
+                  </div>
+
+                  <div className="group">
+                    <label className="text-[10px] uppercase font-black tracking-[0.4em] text-zinc-500 mb-2 block group-focus-within:text-emerald-500 transition-colors">Your Fitness Goals</label>
+                    <textarea 
+                      name="goals" 
+                      required 
+                      rows="2"
+                      className="w-full bg-transparent border-b border-white/10 p-3 text-white focus:border-emerald-500 outline-none transition-all placeholder:text-zinc-800 text-lg font-display uppercase italic resize-none" 
+                      placeholder="E.G. LOSE 10KG, BUILD MUSCLE..." 
+                    />
+                  </div>
+
+                  <button 
+                    disabled={isSubmitting} 
+                    className="group relative w-full bg-emerald-600 text-white py-6 font-black uppercase tracking-[0.4em] text-xs transition-all overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-white translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-500" />
+                    <span className="relative z-10 group-hover:text-black flex items-center justify-center gap-3">
                       {isSubmitting ? <Loader2 className="animate-spin" /> : "Submit Application"}
-                    </button>
-                  </form>
-                )}
+                    </span>
+                  </button>
+                </form>
               </div>
             </motion.div>
           </motion.div>

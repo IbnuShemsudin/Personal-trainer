@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Instagram, Send, MapPin, Mail, Phone, ArrowUp, Github, Twitter } from 'lucide-react';
+import { Link } from 'react-router-dom'; // Added for multi-page navigation
+import { Instagram, Send, MapPin, Mail, Phone, ArrowUp, Twitter, Shield } from 'lucide-react';
 
 const Footer = () => {
   const scrollToTop = () => {
@@ -16,10 +17,10 @@ const Footer = () => {
   ];
 
   const quickLinks = [
-    { name: "Programs", href: "#programs" },
-    { name: "The Lab", href: "#gallery" },
-    { name: "Experience", href: "#experience" },
-    { name: "FAQ", href: "#faq" }
+    { name: "Programs", href: "/#programs" },
+    { name: "The Lab", href: "/#gallery" },
+    { name: "Experience", href: "/#experience" },
+    { name: "FAQ", href: "/#faq" }
   ];
 
   return (
@@ -54,12 +55,13 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Quick Navigation */}
+          {/* Quick Navigation - Updated for React Router */}
           <div>
             <h5 className="text-white font-black uppercase text-[10px] tracking-[0.4em] mb-8">Navigation</h5>
             <ul className="space-y-4">
               {quickLinks.map((link, i) => (
                 <li key={i}>
+                  {/* We use <a> here because we are targeting ID anchors on the home page */}
                   <a href={link.href} className="text-zinc-500 hover:text-emerald-500 text-sm font-bold uppercase tracking-widest transition-colors flex items-center gap-2 group">
                     <span className="w-0 h-[1px] bg-emerald-500 group-hover:w-4 transition-all" />
                     {link.name}
@@ -98,10 +100,18 @@ const Footer = () => {
                 placeholder="EMAIL ADDRESS" 
                 className="w-full bg-zinc-900 border border-white/10 px-4 py-4 text-[10px] font-black text-white focus:outline-none focus:border-emerald-500 transition-colors"
               />
-              <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-emerald-600 text-white p-2 hover:bg-emerald-500 transition-colors">
+              <button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 bg-emerald-600 text-white p-2 hover:bg-emerald-500 transition-colors">
                 <Send size={14} />
               </button>
             </form>
+            
+            {/* Hidden Admin Access */}
+            <Link 
+              to="/admin" 
+              className="mt-8 flex items-center gap-2 text-zinc-800 hover:text-zinc-600 transition-colors text-[9px] font-black uppercase tracking-widest"
+            >
+              <Shield size={10} /> Secure Portal
+            </Link>
           </div>
         </div>
 
