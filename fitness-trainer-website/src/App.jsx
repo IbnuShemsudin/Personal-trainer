@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 
 // --- COMPONENTS ---
@@ -14,73 +14,70 @@ import FAQ from './components/FAQ';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import Success from './components/Success';
+import TelegramFloat from './components/TelegramFloat';
 
 // --- AUTH & SYSTEM ---
 import Login from './components/Admin/Login'; 
 import AdminDashboard from './components/Admin/AdminDashboard';
+import CommsPage from './components/Admin/CommsPage'; 
 import Register from './components/Register'; 
-import SystemBoot from './components/SystemBoot'; // Import your new component
+import SystemBoot from './components/SystemBoot';
 
-// --- LANDING PAGE COMPONENT ---
-const LandingPage = ({ user, onLogout }) => (
-  <div className="bg-zinc-950 selection:bg-emerald-500 selection:text-white relative min-h-screen">
-    <Navbar user={user} onLogout={onLogout} />
-    <main>
-      <Hero />
-      <Programs />
-      <About />
-      <Experience />
-      <Gallery />
-      <TransformationSlider />
-      <FAQ />
-      <Contact />
-    </main>
-    <Footer />
+// --- HELPER: SCROLL TO TOP ---
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+};
+
+// --- HOME PAGE COMPONENT ---
+// This keeps the Hero, Experience, and Transformation together
+const HomePage = ({ user, onLogout }) => (
+  <div className="bg-zinc-950">
+    <Hero />
+    <Experience />
+    <TransformationSlider />
+    <FAQ />
   </div>
 );
 
 // --- PROTECTED ROUTE LOGIC ---
 const ProtectedRoute = ({ children, allowedRole }) => {
   const user = JSON.parse(localStorage.getItem('user'));
-  
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
+  if (!user) return <Navigate to="/login" replace />;
   if (allowedRole && user.role !== allowedRole && user.role !== 'admin') {
     return <Navigate to="/" replace />;
   }
-
   return children;
 };
 
-// --- MAIN APP COMPONENT ---
 function App() {
   const [user, setUser] = useState(null);
   const [isBooting, setIsBooting] = useState(false);
 
-  // Sync state with localStorage on mount
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
+    if (savedUser) setUser(JSON.parse(savedUser));
   }, []);
 
   const handleLoginSuccess = (userData) => {
     setUser(userData);
-    setIsBooting(true); // Trigger the Boot Animation on Login
+    setIsBooting(true);
   };
 
   const handleLogout = () => {
     localStorage.clear();
     setUser(null);
+    window.location.reload();
   };
 
   return (
     <Router>
-      {/* 1. System Boot Overlay */}
-      <AnimatePresence>
+      <ScrollToTop />
+      
+      <AnimatePresence mode="wait">
         {isBooting && (
           <SystemBoot 
             userName={user?.name} 
@@ -89,8 +86,10 @@ function App() {
         )}
       </AnimatePresence>
 
+      <Navbar user={user} onLogout={handleLogout} />
+
       <Routes>
-        {/* PUBLIC ACCESS */}
+        {/* PUBLIC / AUTH */}
         <Route path="/login" element={
           user && !isBooting ? (
             <Navigate to={user.role === 'admin' ? "/admin/dashboard" : "/"} replace />
@@ -98,28 +97,52 @@ function App() {
             <Login onLoginSuccess={handleLoginSuccess} />
           )
         } />
-        
-        {/* Pass handleLoginSuccess to Register too so it boots after sign-up */}
         <Route path="/register" element={<Register onLoginSuccess={handleLoginSuccess} />} />
         <Route path="/success" element={<Success />} />
 
-        {/* PROTECTED: CLIENT HOME PAGE */}
+        {/* PROTECTED CLIENT PAGES */}
         <Route path="/" element={
           <ProtectedRoute allowedRole="client">
-            <LandingPage user={user} onLogout={handleLogout} />
+            <HomePage user={user} onLogout={handleLogout} />
           </ProtectedRoute>
         } />
 
-        {/* PROTECTED: ADMIN DASHBOARD */}
+        <Route path="/programs" element={
+          <ProtectedRoute allowedRole="client">
+            <div className="pt-20"><Programs /></div>
+          </ProtectedRoute>
+        } />
+
+        <Route path="/about" element={
+          <ProtectedRoute allowedRole="client">
+            <div className="pt-20"><About /><Gallery /></div>
+          </ProtectedRoute>
+        } />
+
+        <Route path="/contact" element={
+          <ProtectedRoute allowedRole="client">
+            <div className="pt-20"><Contact /></div>
+          </ProtectedRoute>
+        } />
+
+        {/* ADMIN ROUTES */}
         <Route path="/admin/dashboard" element={
           <ProtectedRoute allowedRole="admin">
             <AdminDashboard onLogout={handleLogout} />
           </ProtectedRoute>
         } />
+        
+        <Route path="/admin/comms" element={
+          <ProtectedRoute allowedRole="admin">
+            <CommsPage />
+          </ProtectedRoute>
+        } />
 
-        {/* CATCH-ALL */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+
+      <Footer />
+      <TelegramFloat />
     </Router>
   );
 }

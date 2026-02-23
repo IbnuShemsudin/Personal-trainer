@@ -1,18 +1,18 @@
 import React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
-const ProtectedRoute = ({ children, allowedRole }) => {
-  const location = useLocation();
-  const user = JSON.parse(localStorage.getItem('user'));
+const ProtectedRoute = ({ children, requiredRole }) => {
+  const sessionData = localStorage.getItem('user');
+  const user = sessionData ? JSON.parse(sessionData) : null;
 
-  if (!user) {
-    // Not logged in? Redirect to login but remember where they tried to go
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  // If no user is logged in, send to login
+  if (!user || !user.token) {
+    return <Navigate to="/login" replace />;
   }
 
-  if (allowedRole && user.role !== allowedRole) {
-    // Logged in but wrong role? Send them to their appropriate home
-    return <Navigate to={user.role === 'admin' ? '/admin' : '/'} replace />;
+  // If a specific role is required (like 'admin') and user doesn't have it
+  if (requiredRole && user.role !== requiredRole) {
+    return <Navigate to="/" replace />;
   }
 
   return children;

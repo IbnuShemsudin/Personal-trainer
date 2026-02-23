@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Menu, X, Instagram, Send, Globe, ChevronRight, 
-  Shield, User, LogOut, Power 
+  Shield, User, LogOut, Power, Radio 
 } from 'lucide-react';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation(); // Required for active link styling
   const { scrollYProgress } = useScroll();
   
   // Get User Session from LocalStorage
@@ -35,11 +36,10 @@ const Navbar = () => {
   };
 
   const navLinks = [
-    { name: 'Home', href: '/#home' },
-    { name: 'Training', href: '/#programs' },
-    { name: 'Results', href: '/#results' },
-    { name: 'About', href: '/#about' },
-    { name: 'Contact', href: '/#contact' },
+    { name: 'Home', href: '/' },
+    { name: 'Training', href: '/programs' },
+    { name: 'About', href: '/about' },
+    { name: 'Contact', href: '/contact' },
   ];
 
   return (
@@ -90,9 +90,9 @@ const Navbar = () => {
           <div className="hidden lg:flex items-center space-x-10">
             <div className="flex space-x-8 border-r border-white/10 pr-10">
               {navLinks.map((link) => (
-                <a key={link.name} href={link.href} className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.25em] hover:text-emerald-500 transition-all py-2">
+                <Link key={link.name} to={link.href} className={`text-[10px] font-black uppercase tracking-[0.25em] transition-all py-2 ${location.pathname === link.href ? 'text-emerald-500' : 'text-zinc-400 hover:text-emerald-500'}`}>
                   {link.name}
-                </a>
+                </Link>
               ))}
             </div>
 
@@ -100,9 +100,14 @@ const Navbar = () => {
               {user ? (
                 <div className="flex items-center gap-6">
                   {user.role === 'admin' && (
-                    <Link to="/admin" className="text-[10px] font-black text-emerald-500 uppercase tracking-widest flex items-center gap-2 hover:text-white transition-colors bg-emerald-500/10 px-3 py-2 border border-emerald-500/20">
-                      <Shield size={14} /> Command
-                    </Link>
+                    <>
+                      <Link to="/admin/dashboard" className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-colors px-3 py-2 border ${location.pathname === '/admin/dashboard' ? 'bg-emerald-500 text-black border-emerald-500' : 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20 hover:text-white'}`}>
+                        <Shield size={14} /> Command
+                      </Link>
+                      <Link to="/admin/comms" className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-colors px-3 py-2 border ${location.pathname === '/admin/comms' ? 'bg-blue-600 text-white border-blue-600' : 'text-blue-500 bg-blue-500/10 border-blue-500/20 hover:text-white'}`}>
+                        <Radio size={14} /> Comms
+                      </Link>
+                    </>
                   )}
                   <button 
                     onClick={handleLogout}
@@ -117,12 +122,12 @@ const Navbar = () => {
                 </Link>
               )}
               
-              <a href="/#contact" className="relative group overflow-hidden border border-emerald-500/50 px-8 py-3 transition-all duration-500 hover:border-emerald-500 block">
+              <Link to="/contact" className="relative group overflow-hidden border border-emerald-500/50 px-8 py-3 transition-all duration-500 hover:border-emerald-500 block">
                 <span className="relative z-10 text-white text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-3">
                   Join Elite <ChevronRight size={14} />
                 </span>
                 <div className="absolute inset-0 bg-emerald-600 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -139,16 +144,21 @@ const Navbar = () => {
             <div className="container mx-auto px-10 flex flex-col h-full pt-32 pb-12 relative z-10">
               <div className="flex flex-col space-y-6">
                 {navLinks.map((link, i) => (
-                  <a key={link.name} href={link.href} onClick={() => setIsOpen(false)} className="text-5xl font-display font-black text-white uppercase italic hover:text-emerald-500 transition-all">
+                  <Link key={link.name} to={link.href} onClick={() => setIsOpen(false)} className="text-5xl font-display font-black text-white uppercase italic hover:text-emerald-500 transition-all">
                     {link.name}
-                  </a>
+                  </Link>
                 ))}
                 
                 <div className="pt-10 border-t border-white/10">
                   {user ? (
                     <div className="space-y-6">
                       <div className="text-emerald-500 font-black text-xl italic">{user.name} // {user.role.toUpperCase()}</div>
-                      {user.role === 'admin' && <Link to="/admin" onClick={() => setIsOpen(false)} className="text-white text-3xl font-display font-black uppercase italic block underline underline-offset-8">Admin Vault</Link>}
+                      {user.role === 'admin' && (
+                        <div className="flex flex-col gap-4">
+                          <Link to="/admin/dashboard" onClick={() => setIsOpen(false)} className="text-white text-3xl font-display font-black uppercase italic block underline underline-offset-8">Admin Vault</Link>
+                          <Link to="/admin/comms" onClick={() => setIsOpen(false)} className="text-blue-500 text-3xl font-display font-black uppercase italic block underline underline-offset-8">Signals Intelligence</Link>
+                        </div>
+                      )}
                       <button onClick={handleLogout} className="text-red-500 text-3xl font-display font-black uppercase italic flex items-center gap-4 hover:text-white transition-colors"><LogOut /> Terminate Session</button>
                     </div>
                   ) : (
