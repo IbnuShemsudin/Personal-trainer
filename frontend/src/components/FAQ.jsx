@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom'; // Added for internal routing
 import { Plus, Minus, HelpCircle, MessageSquare, ArrowRight } from 'lucide-react';
 
 const faqs = [
@@ -19,11 +20,11 @@ const faqs = [
     question: "How does the 1-on-1 coaching work?",
     answer: "It’s a digital-physical hybrid. We track your metrics via my dedicated portal, with weekly check-ins to adjust volume, intensity, and nutrition based on your body's bio-feedback."
   },
-    {
+  {
     question: "What if I have a busy schedule?",
     answer: "My programs are designed for maximum efficiency. Even with a packed schedule, I can tailor your training to fit into 3-4 focused sessions per week without sacrificing results."
   },
-    {
+  {
     question: "Can I combine this with other fitness activities?",
     answer: "Yes, but with caveats. Supplementary activities should complement your primary goals. I’ll help you structure cross-training without impeding recovery or hypertrophic adaptations."
   }
@@ -33,7 +34,7 @@ const FAQ = () => {
   const [activeIndex, setActiveIndex] = useState(null);
 
   return (
-    <section id="faq" className="py-32 bg-zinc-950 relative overflow-hidden">
+    <section id="faq" className="py-24 md:py-32 bg-zinc-950 relative overflow-hidden">
       {/* Background Accent */}
       <div className="absolute top-1/2 left-0 -translate-y-1/2 w-64 h-64 bg-emerald-500/5 blur-[120px] rounded-full" />
 
@@ -45,7 +46,8 @@ const FAQ = () => {
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              className="sticky top-32"
+              viewport={{ once: true }}
+              className="lg:sticky lg:top-32"
             >
               <div className="flex items-center gap-4 mb-6">
                 <div className="h-[1px] w-12 bg-emerald-500" />
@@ -59,15 +61,18 @@ const FAQ = () => {
                 Everything you need to know before stepping into the iron lab. No fluff, just the facts.
               </p>
 
-              <div className="p-8 bg-zinc-900 border border-white/5 relative group">
-                <div className="absolute top-0 left-0 w-1 h-full bg-emerald-600 transition-all group-hover:w-full group-hover:opacity-5 -z-10" />
-                <HelpCircle className="text-emerald-500 mb-4" size={32} />
-                <h4 className="text-white font-black uppercase mb-2">Still have questions?</h4>
-                <p className="text-zinc-500 text-sm mb-6">DM me directly on Telegram or Instagram for a 5-minute consultation.</p>
-                <a href="/contact" className="flex items-center gap-2 text-emerald-500 text-[10px] font-black uppercase tracking-widest hover:gap-4 transition-all">
-                  Contact Now <ArrowRight size={14} />
-                </a>
-              </div>
+              {/* Linked CTA Card */}
+              <Link to="/contact" className="block group">
+                <div className="p-8 bg-zinc-900 border border-white/5 relative overflow-hidden transition-all duration-500 group-hover:border-emerald-500/50 active:scale-[0.98]">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-emerald-600 transition-all duration-500 group-hover:w-full group-hover:opacity-10 -z-10" />
+                  <HelpCircle className="text-emerald-500 mb-4 group-hover:rotate-12 transition-transform" size={32} />
+                  <h4 className="text-white font-black uppercase mb-2">Still have questions?</h4>
+                  <p className="text-zinc-500 text-sm mb-6">DM me directly on Telegram or Instagram for a 5-minute consultation.</p>
+                  <div className="flex items-center gap-2 text-emerald-500 text-[10px] font-black uppercase tracking-widest group-hover:gap-4 transition-all">
+                    Contact Now <ArrowRight size={14} />
+                  </div>
+                </div>
+              </Link>
             </motion.div>
           </div>
 
@@ -79,12 +84,13 @@ const FAQ = () => {
                   key={i}
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
                   className="group"
                 >
                   <button
                     onClick={() => setActiveIndex(activeIndex === i ? null : i)}
-                    className={`w-full text-left p-6 md:p-8 flex items-center justify-between transition-all duration-500 border ${
+                    className={`w-full text-left p-6 md:p-8 flex items-center justify-between transition-all duration-500 border active:scale-[0.99] md:active:scale-100 ${
                       activeIndex === i 
                       ? 'bg-zinc-900 border-emerald-500/50' 
                       : 'bg-zinc-900/30 border-white/5 hover:border-white/10'
@@ -106,13 +112,13 @@ const FAQ = () => {
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.4, ease: "easeInOut" }}
+                        transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
                         className="overflow-hidden"
                       >
                         <div className="p-8 bg-zinc-900/50 border-x border-b border-white/5 text-zinc-400 leading-relaxed font-light">
                           <div className="flex gap-4">
                             <MessageSquare className="text-emerald-500/20 shrink-0" size={20} />
-                            <p>{faq.answer}</p>
+                            <p className="text-sm md:text-base">{faq.answer}</p>
                           </div>
                         </div>
                       </motion.div>
