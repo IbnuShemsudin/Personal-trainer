@@ -5,7 +5,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Float, MeshDistortMaterial, Sphere, PerspectiveCamera, Grid } from '@react-three/drei';
 
 // ASSETS
-import heroImage from '../assets/heroImage1.png';
+import heroimage from '../assets/heroimage1.png';
 import backgroundVideo from '../assets/background.mp4';
 
 // --- 3D GRID FLOOR COMPONENT ---
@@ -141,7 +141,7 @@ const Hero = () => {
             className="relative w-full h-full"
           >
             <motion.img 
-              src={heroImage}
+              src={heroimage}
               alt="Elite Trainer" 
               className="w-full h-full object-cover hover:grayscale transition-all duration-1000 scale-105"
               style={{ transform: "translateZ(30px)" }}
