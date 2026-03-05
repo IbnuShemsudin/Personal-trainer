@@ -239,7 +239,7 @@ const Hero = () => {
               className="mt-12 flex flex-col sm:flex-row gap-6"
             >
               <a 
-                href="contact" 
+                href="/contact" 
                 className="group bg-emerald-600 hover:bg-white text-white hover:text-black px-10 py-5 font-black uppercase tracking-widest transition-all duration-500 flex items-center justify-center gap-4 border border-emerald-600"
               >
                 Start Training

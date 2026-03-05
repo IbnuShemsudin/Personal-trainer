@@ -64,7 +64,7 @@ const FAQ = () => {
                 <HelpCircle className="text-emerald-500 mb-4" size={32} />
                 <h4 className="text-white font-black uppercase mb-2">Still have questions?</h4>
                 <p className="text-zinc-500 text-sm mb-6">DM me directly on Telegram or Instagram for a 5-minute consultation.</p>
-                <a href="#contact" className="flex items-center gap-2 text-emerald-500 text-[10px] font-black uppercase tracking-widest hover:gap-4 transition-all">
+                <a href="/contact" className="flex items-center gap-2 text-emerald-500 text-[10px] font-black uppercase tracking-widest hover:gap-4 transition-all">
                   Contact Now <ArrowRight size={14} />
                 </a>
               </div>
