@@ -3,8 +3,8 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Quote, Zap, ArrowRight, Activity, Calendar, User } from 'lucide-react';
 
 // Import your local images
-import imageBefore from '../assets/heroImage1.png'; // Update with actual before path
-import imageAfter from '../assets/heroImage.png';  // Update with actual after path
+import imageBefore from '../assets/heroimage1.png'; // Update with actual before path
+import imageAfter from '../assets/heroimage.png';  // Update with actual after path
 
 const TransformationSlider = () => {
   const [sliderPos, setSliderPos] = useState(50);
