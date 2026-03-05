@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Instagram, Maximize2, X, ChevronRight, Camera, Loader2, Plus, ArrowUpRight } from 'lucide-react';
 
 // 1. IMPORT YOUR LOCAL IMAGES HERE
-import img1 from '../assets/heroImage1.png';
-import img2 from '../assets/heroImage1.png';
-import img3 from '../assets/heroImage1.png';
+import img1 from '../assets/heroimage1.png';
+import img2 from '../assets/heroimage1.png';
+import img3 from '../assets/heroimage1.png';
 
 const Gallery = () => {
   const [filter, setFilter] = useState('all');
