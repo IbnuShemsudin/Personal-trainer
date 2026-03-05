@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+/* 1. Import Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700;900&family=Inter:wght@300;400;700&display=swap');
+
+@theme {
+  /* This defines your variables for use in JSX */
+  --color-ethio-green: #006a4e;
+  --color-ethio-black: #0a0a0a;
+  --font-display: "Oswald", sans-serif;
+  --font-body: "Inter", sans-serif;
+}
+
+:root {
+  background-color: #0a0a0a;
+  color: white;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #0a0a0a;
+  overflow-x: hidden;
+  font-family: var(--font-body);
+}
+
+/* 2. Custom Utility Classes */
+@utility stroke-text {
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.4);
+  color: transparent;
+}
+
+@utility ethio-glass {
+  background-color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@utility glow-green {
+  box-shadow: 0 0 20px rgba(0, 106, 78, 0.3);
+}
+
+/* 3. Global Heading Styles */
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-display);
+}
+
+html {
+  scroll-behavior: smooth;
+}
