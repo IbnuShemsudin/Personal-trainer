@@ -3,7 +3,7 @@ import { motion, AnimatePresence, useScroll, useTransform, useInView, useSpring,
 import { CheckCircle2, Award, Zap, Users, Target, MoveRight, X, Flame, Shield, Brain } from 'lucide-react';
 
 // Import local image
-import coachImage from '../assets/heroImage1.png'; 
+import coachImage from '../assets/heroimage1.png'; 
 
 // --- COUNTER COMPONENT ---
 const AnimatedNumber = ({ value }) => {
