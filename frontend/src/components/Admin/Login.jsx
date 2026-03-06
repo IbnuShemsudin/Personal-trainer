@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Lock, User, ShieldCheck, Loader2, AlertCircle, Terminal, Activity } from 'lucide-react';
+import { Lock, User, ShieldCheck, Loader2, AlertCircle, Terminal, Activity, UserPlus, Fingerprint } from 'lucide-react';
 
 // Added onLoginSuccess to the props destructured below
 const Login = ({ onLoginSuccess }) => {
@@ -152,18 +152,41 @@ const Login = ({ onLoginSuccess }) => {
                   {loading ? (
                     <Loader2 className="animate-spin" size={18} />
                   ) : (
-                    "Verify Identity"
+                    <>
+                      <Fingerprint size={16} className="group-hover:rotate-12 transition-transform" />
+                      Verify Identity
+                    </>
                   )}
                 </button>
                 
-                <div className="text-center pt-4">
-                   <button 
+                {/* ENHANCED CREATE ACCOUNT UI */}
+                <div className="relative pt-8 mt-4 border-t border-white/5">
+                  <div className="absolute -top-[1px] left-0 w-8 h-[1px] bg-emerald-500" />
+                  
+                  <button 
                     type="button"
                     onClick={() => navigate('/register')}
-                    className="text-[9px] uppercase font-black text-zinc-600 hover:text-emerald-500 tracking-[0.2em] transition-colors"
-                   >
-                     New Recruit? Initiate Enrollment
-                   </button>
+                    className="w-full group flex flex-col items-center gap-3"
+                  >
+                    <div className="flex items-center gap-3 text-zinc-600 group-hover:text-emerald-500 transition-colors">
+                      <UserPlus size={14} />
+                      <span className="text-[9px] uppercase font-black tracking-[0.3em]">
+                        New Recruit? <span className="text-white group-hover:text-emerald-500 transition-colors">Initiate Enrollment</span>
+                      </span>
+                    </div>
+                    
+                    {/* Visual Status Bar Decor */}
+                    <div className="flex gap-1">
+                      {[1,2,3,4].map((i) => (
+                        <div 
+                          key={i} 
+                          className={`h-1 w-8 transition-all duration-500 ${
+                            i === 1 ? 'bg-emerald-500/40 group-hover:bg-emerald-500' : 'bg-zinc-800 group-hover:bg-emerald-500/20'
+                          }`} 
+                        />
+                      ))}
+                    </div>
+                  </button>
                 </div>
               </form>
             </motion.div>
@@ -175,14 +198,13 @@ const Login = ({ onLoginSuccess }) => {
         </div>
       </motion.div>
 
-      {/* FIXED: Removed the 'jsx' attribute to resolve console warning */}
       <style>{`
         @keyframes scan {
-          0% { top: 0; }
-          100% { top: 100%; }
+          0% { top: -10%; }
+          100% { top: 110%; }
         }
         .animate-scan {
-          animation: scan 3s linear infinite;
+          animation: scan 4s linear infinite;
         }
       `}</style>
     </div>
