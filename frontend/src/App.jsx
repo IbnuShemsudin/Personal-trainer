@@ -15,7 +15,6 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 import Success from './components/Success';
 import TelegramFloat from './components/TelegramFloat';
-import LandingPage from './components/LandingPage'; // Added Landing Page
 
 // --- AUTH & SYSTEM ---
 import Login from './components/Admin/Login'; 
@@ -33,7 +32,8 @@ const ScrollToTop = () => {
   return null;
 };
 
-// --- HOME PAGE COMPONENT (INTERNAL) ---
+// --- HOME PAGE COMPONENT ---
+// This keeps the Hero, Experience, and Transformation together
 const HomePage = ({ user, onLogout }) => (
   <div className="bg-zinc-950">
     <Hero />
@@ -100,19 +100,13 @@ function App() {
         <Route path="/register" element={<Register onLoginSuccess={handleLoginSuccess} />} />
         <Route path="/success" element={<Success />} />
 
-        {/* DYNAMIC ROOT ROUTE: 
-            If NOT logged in -> Show Cinematic Landing Page 
-            If logged in -> Show Internal HomePage (Hero, Experience, etc)
-        */}
+        {/* PROTECTED CLIENT PAGES */}
         <Route path="/" element={
-          user ? (
+          <ProtectedRoute allowedRole="client">
             <HomePage user={user} onLogout={handleLogout} />
-          ) : (
-            <LandingPage />
-          )
+          </ProtectedRoute>
         } />
 
-        {/* PROTECTED CLIENT PAGES */}
         <Route path="/programs" element={
           <ProtectedRoute allowedRole="client">
             <div className="pt-20"><Programs /></div>
