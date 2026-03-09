@@ -119,6 +119,8 @@ const TransformationSlider = () => {
             </div>
           </div>
 
+          
+
           {/* 3. BIOMETRIC DATA & SOCIAL PROOF */}
           <div className="lg:col-span-5">
             <div className="relative mb-12">

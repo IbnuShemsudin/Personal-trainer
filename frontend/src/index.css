@@ -68,3 +68,35 @@ html {
   -webkit-text-stroke: 1px rgba(255, 255, 255, 0.4);
   color: transparent;
 }
+
+@layer utilities {
+  .stroke-text {
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* For that technical grid background look */
+.bg-grid-pattern {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+}
+
+
+@keyframes scan {
+  0% { top: 0%; opacity: 0; }
+  50% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+.animate-scan {
+  animation: scan 3s linear infinite;
+}
+
+.bg-grid-pattern {
+  background-size: 60px 60px;
+  background-image: 
+    linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+}

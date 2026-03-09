@@ -15,6 +15,7 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 import Success from './components/Success';
 import TelegramFloat from './components/TelegramFloat';
+import Transformations from './components/Transformations';
 
 // --- AUTH & SYSTEM ---
 import Login from './components/Admin/Login'; 
@@ -33,8 +34,7 @@ const ScrollToTop = () => {
 };
 
 // --- HOME PAGE COMPONENT ---
-// This keeps the Hero, Experience, and Transformation together
-const HomePage = ({ user, onLogout }) => (
+const HomePage = () => (
   <div className="bg-zinc-950">
     <Hero />
     <Experience />
@@ -43,13 +43,17 @@ const HomePage = ({ user, onLogout }) => (
   </div>
 );
 
-// --- PROTECTED ROUTE LOGIC ---
+// --- PROTECTED ROUTE LOGIC (Strictly for Admins now) ---
 const ProtectedRoute = ({ children, allowedRole }) => {
   const user = JSON.parse(localStorage.getItem('user'));
+  
   if (!user) return <Navigate to="/login" replace />;
-  if (allowedRole && user.role !== allowedRole && user.role !== 'admin') {
+  
+  // If the route is specifically for admin, block anyone who isn't an admin
+  if (allowedRole === 'admin' && user.role !== 'admin') {
     return <Navigate to="/" replace />;
   }
+  
   return children;
 };
 
@@ -70,7 +74,7 @@ function App() {
   const handleLogout = () => {
     localStorage.clear();
     setUser(null);
-    window.location.reload();
+    window.location.href = "/"; // Force redirect to home on logout
   };
 
   return (
@@ -89,7 +93,26 @@ function App() {
       <Navbar user={user} onLogout={handleLogout} />
 
       <Routes>
-        {/* PUBLIC / AUTH */}
+        {/* --- PUBLIC ROUTES (No Protection) --- */}
+        <Route path="/" element={<HomePage />} />
+        
+        <Route path="/programs" element={
+          <div className="pt-20"><Programs /></div>
+        } />
+
+        <Route path="/about" element={
+          <div className="pt-20"><About /><Gallery /></div>
+        } />
+
+        <Route path="/contact" element={
+          <div className="pt-20"><Contact /></div>
+        } />
+
+        <Route path="/transformations" element={
+          <div className="pt-20"><Transformations /></div>
+        } />
+
+        {/* --- AUTH ROUTES --- */}
         <Route path="/login" element={
           user && !isBooting ? (
             <Navigate to={user.role === 'admin' ? "/admin/dashboard" : "/"} replace />
@@ -100,32 +123,7 @@ function App() {
         <Route path="/register" element={<Register onLoginSuccess={handleLoginSuccess} />} />
         <Route path="/success" element={<Success />} />
 
-        {/* PROTECTED CLIENT PAGES */}
-        <Route path="/" element={
-          <ProtectedRoute allowedRole="client">
-            <HomePage user={user} onLogout={handleLogout} />
-          </ProtectedRoute>
-        } />
-
-        <Route path="/programs" element={
-          <ProtectedRoute allowedRole="client">
-            <div className="pt-20"><Programs /></div>
-          </ProtectedRoute>
-        } />
-
-        <Route path="/about" element={
-          <ProtectedRoute allowedRole="client">
-            <div className="pt-20"><About /><Gallery /></div>
-          </ProtectedRoute>
-        } />
-
-        <Route path="/contact" element={
-          <ProtectedRoute allowedRole="client">
-            <div className="pt-20"><Contact /></div>
-          </ProtectedRoute>
-        } />
-
-        {/* ADMIN ROUTES */}
+        {/* --- STRICT ADMIN ROUTES --- */}
         <Route path="/admin/dashboard" element={
           <ProtectedRoute allowedRole="admin">
             <AdminDashboard onLogout={handleLogout} />
@@ -138,6 +136,7 @@ function App() {
           </ProtectedRoute>
         } />
 
+        {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 

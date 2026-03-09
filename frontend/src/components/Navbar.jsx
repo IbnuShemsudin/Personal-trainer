@@ -10,10 +10,9 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation(); // Required for active link styling
+  const location = useLocation(); 
   const { scrollYProgress } = useScroll();
   
-  // Get User Session from LocalStorage
   const user = JSON.parse(localStorage.getItem('user'));
 
   const scaleX = useSpring(scrollYProgress, {
@@ -29,15 +28,17 @@ const Navbar = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.clear(); // Wipe Vault session
+    localStorage.clear(); 
     setIsOpen(false);
     navigate('/login');
-    window.location.reload(); // Ensures UI resets immediately
+    window.location.reload(); 
   };
 
+  // UPDATED: Added Transformations link
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Training', href: '/programs' },
+    { name: 'Transformations', href: '/transformations' },
     { name: 'About', href: '/about' },
     { name: 'Contact', href: '/contact' },
   ];
@@ -49,7 +50,6 @@ const Navbar = () => {
         style={{ scaleX }}
       />
 
-      {/* 2. Top Info Bar */}
       <div className={`hidden md:flex bg-zinc-950/80 backdrop-blur-md border-b border-white/5 py-2 transition-all duration-700 ${scrolled ? 'opacity-0 -translate-y-full' : 'opacity-100'}`}>
         <div className="container mx-auto px-6 flex justify-between text-[10px] font-black tracking-[0.3em] text-zinc-500 uppercase">
           <div className="flex gap-8">
@@ -71,7 +71,6 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* 3. Main Navigation */}
       <nav className={`transition-all duration-500 ${scrolled ? 'bg-zinc-950/80 backdrop-blur-xl border-b border-white/5 py-4' : 'bg-transparent py-8'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
           
@@ -86,7 +85,6 @@ const Navbar = () => {
             </div>
           </Link>
 
-          {/* Desktop Links */}
           <div className="hidden lg:flex items-center space-x-10">
             <div className="flex space-x-8 border-r border-white/10 pr-10">
               {navLinks.map((link) => (
@@ -137,7 +135,6 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* 4. Full-Screen Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div initial={{ opacity: 0, x: '100%' }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: '100%' }} className="fixed inset-0 h-screen bg-zinc-950 z-[120] flex flex-col lg:hidden">
